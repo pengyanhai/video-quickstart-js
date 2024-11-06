@@ -11,6 +11,8 @@ require('dotenv').load();
 
 const express = require('express');
 const http = require('http');
+const https = require('https')
+const fs = require('fs')
 const path = require('path');
 const { jwt: { AccessToken } } = require('twilio');
 
@@ -87,8 +89,17 @@ app.get('/token', function(request, response) {
 });
 
 // Create http server and run it.
-const server = http.createServer(app);
-const port = process.env.PORT || 3000;
-server.listen(port, function() {
-  console.log('Express server running on *:' + port);
+// const server = http.createServer(app);
+// const port = process.env.PORT || 3000;
+// server.listen(port, function() {
+//   console.log('Express server running on *:' + port);
+// });
+
+const options = {
+  key: fs.readFileSync(path.join(__dirname, 'private.key')),
+  cert: fs.readFileSync(path.join(__dirname, 'certificate.crt'))
+}
+
+https.createServer(options, app).listen(443, () => {
+  console.log('Server is listening on https://localhost');
 });
